@@ -1,0 +1,19 @@
+{{ COMMON_LOG_DIR }}/tracking/tracking.log {
+  compress
+  create
+  dateext
+  dateformat -%Y%m%d-%s
+  missingok
+  nodelaycompress
+  notifempty
+  rotate 16000
+  size 1M
+  postrotate
+    /usr/bin/killall -HUP rsyslogd
+  endscript
+  lastaction
+    {% if COMMON_AWS_SYNC -%}
+    {{ COMMON_AWS_S3_SYNC_SCRIPT }} -d "{{ COMMON_LOG_DIR }}/tracking/*" -b "{{ COMMON_AWS_SYNC_BUCKET }}/logs/tracking"
+    {% endif -%}
+  endscript
+}

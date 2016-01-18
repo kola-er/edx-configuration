@@ -1,0 +1,48 @@
+# ansible-playbook -i ec2.py commoncluster.yml --limit tag_Name_stage-edx-commoncluster -e@/path/to/vars/env-deployment.yml -T 30 --list-hosts
+
+- name: Deploy common cluster (certs, xqueue, elasticsearch, rabbitmq)
+  hosts: ~{{ machine }}
+  pre_tasks:
+    - fail: msg="This playbook only runnable on 'cc' machines"
+      when: "'cc' not in machine"
+  sudo: True
+  vars:
+    secure_dir: '../../../configuration-secure'
+    # The default behaviour is not to migrate db
+    # migrate_db: yes
+  vars_files:
+    - "{{ secure_dir }}/vars/deployment.yml"
+    - "{{ secure_dir }}/vars/keys.yml"
+  gather_facts: True
+  roles:
+    - bdu_common
+    - common
+    - supervisor
+    - bdu_certs
+    - certs
+    - role: nginx
+      nginx_sites:
+      - certs
+      - xqueue
+    - role: xqueue
+      update_users: True
+    - oraclejdk
+    - elasticsearch
+    - role: rabbitmq
+      rabbitmq_ip: '0.0.0.0'
+
+#
+# In order to reconfigure the host resolution we are issuing a
+# reboot.
+# TODO: We should probably poll to ensure the host comes back before moving
+# to the next host so that we don't reboot all of the servers simultaneously
+- hosts: ~{{ machine }}
+  sudo: True
+  serial: 1
+  vars:
+    reboot: False
+  tasks:
+    - name: reboot
+      command: /sbin/shutdown -r now "Reboot is triggered by Ansible"
+      when: reboot
+      tags: reboot
