@@ -1,0 +1,5 @@
+---
+BDU_FIREWALL_ALLOWED_PORTS:
+  - "22"
+
+bdu_firewall_private_interface: eth0

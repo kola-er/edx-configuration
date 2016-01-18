@@ -1,0 +1,19 @@
+---
+#
+# BDUx Configuration
+#
+# github:     https://github.com/lgfa29/configuration
+# wiki:       https://github.com/edx/configuration/wiki
+# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Handlers for role bdu_edxlocal
+#
+
+- name: restart memcached
+  service: name=memcached state=restarted
+
+- name: restart mysql
+  service: name=mysql state=restarted

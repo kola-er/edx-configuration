@@ -1,0 +1,14 @@
+---
+- name: make sure ufw is installed
+  apt: package=ufw state=present
+
+- name: allow traffic on private network
+  ufw: rule=allow interface={{ bdu_firewall_private_interface }} direction=in
+
+- name: configure ufw rules
+  ufw: rule=allow port={{ item }}
+  with_items: BDU_FIREWALL_ALLOWED_PORTS
+  notify: restart ufw
+
+- name: enable ufw
+  ufw: state=enabled

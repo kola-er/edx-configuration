@@ -1,0 +1,36 @@
+---
+#
+# BDUx Configuration
+#
+# github:     https://github.com/lgfa29/configuration
+# wiki:       https://github.com/edx/configuration/wiki
+# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Tasks for role bdu_common
+#
+# Overview:
+#
+# Installs common requirements for BDU servers
+#
+# Example play:
+#
+#   - roles:
+#     - bdu_common
+#
+
+- fail: msg="{{ item }} IP not defined"
+  when: item is not defined
+  with_items:
+    - BDU_COMMON_CLUSTER
+    - BDU_DATABASE
+    - BDU_WORKERS
+
+- name: dump all variables
+  template: src=dumpall.j2 dest=/tmp/ansible.all
+
+- name: install additional packages
+  apt: name={{ item }} state=present
+  with_items: BDU_COMMON_ADDITIONAL_PACKAGES
