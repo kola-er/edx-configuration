@@ -1,0 +1,70 @@
+---
+#
+# BDUx Configuration
+#
+# github:     https://github.com/lgfa29/configuration
+# wiki:       https://github.com/edx/configuration/wiki
+# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Tasks for role bdu_edxlocal
+#
+# Overview:
+#
+# Installs MySQL and memcached and cofigure for remote access in private network.
+#
+# Dependencies:
+#   - edxlocal
+#
+# Example play:
+#
+#   - roles:
+#     - common
+#     - supervisor
+#     - bdu_edxlocal
+#
+
+- name: change memcached bind address
+  lineinfile: >
+    dest=/etc/memcached.conf
+    state=present
+    regexp='^-l'
+    line='-l {{ BDU_DATABASE }}'
+  notify: restart memcached
+
+- name: grant access to mysql db users over private network
+  mysql_user: >
+    name='{{ item.username }}'
+    password='{{ item.password }}'
+    priv='{{ item.privileges }}'
+    host='10.%.%.%'
+  with_items:
+    # application user
+    - database: '{{ EDXAPP_MYSQL_DB_NAME }}'
+      username: '{{ EDXAPP_MYSQL_USER }}'
+      password: '{{ EDXAPP_MYSQL_PASSWORD }}'
+      privileges: '{{ EDXAPP_MYSQL_DB_NAME }}.*:ALL'
+
+    # xqueue user
+    - database: '{{ XQUEUE_MYSQL_DB_NAME }}'
+      username: '{{ XQUEUE_MYSQL_USER }}'
+      password: '{{ XQUEUE_MYSQL_PASSWORD }}'
+      privileges: '{{ XQUEUE_MYSQL_DB_NAME }}.*:ALL'
+
+    # migrate user
+    - database: '{{ EDXAPP_MYSQL_DB_NAME }}'
+      username: '{{ COMMON_MYSQL_MIGRATE_USER }}'
+      password: '{{ COMMON_MYSQL_MIGRATE_PASS }}'
+      privileges: '{{ EDXAPP_MYSQL_DB_NAME }}.*:ALL/{{ XQUEUE_MYSQL_DB_NAME }}.*:ALL'
+
+    # read_only user
+    - database: '{{ EDXAPP_MYSQL_DB_NAME }}'
+      username: '{{ COMMON_MYSQL_READ_ONLY_USER }}'
+      password: '{{ COMMON_MYSQL_READ_ONLY_PASS }}'
+      privileges: '{{ EDXAPP_MYSQL_DB_NAME }}.*:SELECT/{{ XQUEUE_MYSQL_DB_NAME }}.*:SELECT'
+
+- name: apply my.cnf template file
+  template: src=etc/mysql/my.cnf.j2 dest=/etc/mysql/my.cnf
+  notify: restart mysql

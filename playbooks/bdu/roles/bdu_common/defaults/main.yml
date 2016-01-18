@@ -1,0 +1,3 @@
+---
+BDU_COMMON_ADDITIONAL_PACKAGES:
+  - vim # YES! vim is goood
