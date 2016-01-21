@@ -28,8 +28,8 @@
     - BDU_DATABASE
     - BDU_WORKERS
 
-- name: dump all variables
-  template: src=dumpall.j2 dest=/tmp/ansible.all
+# - name: dump all variables
+#   template: src=dumpall.j2 dest=/tmp/ansible.all
 
 - name: install additional packages
   apt: name={{ item }} state=present

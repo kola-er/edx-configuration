@@ -1,48 +1,13 @@
 # Installs packages to run edx locally on a single instance
-# requires:
-#  - group_vars/all
-#  - common/tasks/main.yml
-#
-#  This installs mysql-server-5.5 though
-#  in production we use mysql-5.1.62.
-#
-#  We could install from source instead:
-#  http://downloads.mysql.com/archives/mysql-5.1/mysql-5.1.62.tar.gz
 #
 ---
-
-# Install PPA for installing MySQL 5.6 on Ubuntu 12.04LTS
-- name: install ppa key
-  apt_key:
-    id=E5267A6C
-    url='{{ COMMON_UBUNTU_APT_KEYSERVER }}0x14AA40EC0831756756D7F66C4F4EA0AAE5267A6C'
-    state=present
-
-- name: install apt repository
-  apt_repository_1.8:
-    repo='deb http://ppa.launchpad.net/ondrej/mysql-5.6/ubuntu precise main'
-    update_cache=yes validate_certs=no
-
-- name: look for mysql 5.5
-  shell: dpkg -L mysql-server-5.5
-  ignore_errors: true
-  register: mysql_55_installed
-
-- include: remove_mysql_55.yml
-  when: mysql_55_installed.rc != 1
-
-- name: install mysql 56 and dependencies
-  apt: pkg={{ item }} install_recommends=yes force=yes state=present
-  with_items:
-    - software-properties-common
-    - mysql-server
-
-- name: start mysql
-  service: name=mysql state=started
 
 - name: install packages needed for single server
   apt: pkg={{ item }} install_recommends=yes state=present
   with_items: edxlocal_debian_pkgs
+
+- name: restart mysql
+  service: name=mysql state=restarted
 
 - name: create databases
   mysql_db:
@@ -71,14 +36,14 @@
 
 - name: create api user for the analytics api
   mysql_user: >
-    name=api001
+    name="{{ ANALYTICS_API_DATABASES.default.USER }}"
     password="{{ ANALYTICS_API_DATABASES.default.PASSWORD }}"
     priv='{{ ANALYTICS_API_DATABASES.default.NAME }}.*:ALL/reports.*:SELECT'
   when: ANALYTICS_API_SERVICE_CONFIG is defined
 
 - name: create read-only reports user for the analytics-api
   mysql_user: >
-    name=reports001
+    name="{{ ANALYTICS_API_DATABASES.reports.USER }}"
     password="{{ ANALYTICS_API_DATABASES.reports.PASSWORD }}"
     priv='{{ ANALYTICS_API_DATABASES.reports.NAME }}.*:SELECT'
   when: ANALYTICS_API_SERVICE_CONFIG is defined
@@ -92,9 +57,9 @@
 
 - name: setup the edx-notes-api db user
   mysql_user: >
-    name={{ EDX_NOTES_API_MYSQL_DB_USER }}
-    password={{ EDX_NOTES_API_MYSQL_DB_PASS }}
-    priv='{{ EDX_NOTES_API_MYSQL_DB_NAME }}.*:SELECT,INSERT,UPDATE,DELETE'
+    name={{ EDX_NOTES_API_DATABASES.default.USER }}
+    password={{ EDX_NOTES_API_DATABASES.default.PASS }}
+    priv='{{ EDX_NOTES_API_DATABASES.default.NAME }}.*:SELECT,INSERT,UPDATE,DELETE'
   when: EDX_NOTES_API_MYSQL_DB_USER is defined
 
 
@@ -109,7 +74,6 @@
     name={{ COMMON_MYSQL_ADMIN_USER }}
     password={{ COMMON_MYSQL_ADMIN_PASS }}
     priv='*.*:CREATE USER'
-
 
 - name: install memcached
   apt: pkg=memcached state=present
