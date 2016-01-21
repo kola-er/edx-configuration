@@ -17,17 +17,17 @@ MONGODB_APT_KEYSERVER: "keyserver.ubuntu.com"
 MONGODB_REPO: "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
 
 # Vars Meant to be overridden
-MONGO_ADMIN_USER: 'admin'
-MONGO_ADMIN_PASSWORD: 'password'
-MONGO_USERS:
-  - user: cs_comments_service
-    password: password
-    database: cs_comments_service
-    roles: readWrite
-  - user: edxapp
-    password: password
-    database: edxapp
-    roles: readWrite
+# MONGO_ADMIN_USER: ''
+# MONGO_ADMIN_PASSWORD: ''
+# MONGO_USERS:
+#   - user: ''
+#     password: ''
+#     database: ''
+#     roles: ''
+#   - user: edxapp
+#     password: ''
+#     database: ''
+#     roles: ''
 
 MONGO_CLUSTERED: !!null
 MONGO_BIND_IP: 0.0.0.0
