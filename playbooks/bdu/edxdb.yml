@@ -6,5 +6,6 @@
     - bdu_common
     - common
     - supervisor
-    - bdu_edxlocal
+    - mysql
     - mongo
+    - bdu_edxlocal
