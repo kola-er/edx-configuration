@@ -9,7 +9,9 @@
 #
 ##
 # Defaults for role security
-# 
+#
+
+ansible_distribution: 'Ubuntu'
 
 #
 # vars are namespace with the module name.
@@ -27,7 +29,7 @@ SECURITY_UPGRADE_ON_ANSIBLE: false
 # OS packages
 #
 
-security_debian_pkgs: 
+security_debian_pkgs:
   - aptitude
   - unattended-upgrades
   - gcc
