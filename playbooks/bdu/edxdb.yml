@@ -1,6 +1,11 @@
 - name: "Deploy MySQL, MongoDB and memcached"
   hosts: dbservers
   sudo: True
+  vars:
+    secure_dir: '../../../configuration-secure'
+  vars_files:
+    - "{{ secure_dir }}/vars/deployment.yml"
+    - "{{ secure_dir }}/vars/keys.yml"
   gather_facts: True
   roles:
     - bdu_common
