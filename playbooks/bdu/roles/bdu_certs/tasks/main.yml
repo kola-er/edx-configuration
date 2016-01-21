@@ -1,0 +1,38 @@
+---
+#
+# BDUx Configuration
+#
+# github:     https://github.com/lgfa29/configuration
+# wiki:       https://github.com/edx/configuration/wiki
+# code style: https://github.com/edx/configuration/wiki/Ansible-Coding-Conventions
+# license:    https://github.com/edx/configuration/blob/master/LICENSE.TXT
+#
+#
+#
+# Tasks for role bdu_certificates
+#
+# Overview:
+#
+# Add tasks for the certificates module on BDU.
+# Must be called before certs because certs require cert-data.yml which is
+# deployed here.
+#
+# Example play:
+#
+#   - roles:
+#     - bdu_certs
+#     - certs
+#
+
+- name: create temp dir to store certificates
+  file: >
+    path={{ BDU_CERTS_TEMP_DIR }} state=directory
+    group={{ certs_user }} owner={{ certs_user }}
+
+- name: replace cert-data.yml file
+  template: >
+    src=cert-data.yml.j2 dest={{ certs_code_dir }}/cert-data.yml
+    owner={{ certs_user }} mode=0644
+  notify: restart certs
+
+- set_fact: certs_installed=true
