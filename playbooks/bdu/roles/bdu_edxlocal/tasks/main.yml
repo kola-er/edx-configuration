@@ -39,7 +39,7 @@
     name='{{ item.username }}'
     password='{{ item.password }}'
     priv='{{ item.privileges }}'
-    host='10.%.%.%'
+    host='{{ PRIVATE_NETWORK }}'
   with_items:
     # application user
     - database: '{{ EDXAPP_MYSQL_DB_NAME }}'
