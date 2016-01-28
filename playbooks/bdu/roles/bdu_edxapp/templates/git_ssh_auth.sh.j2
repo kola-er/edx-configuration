@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/bin/ssh -o StrictHostKeyChecking=no -i {{ bdu_edxapp_xblocks_git_identity }} "$@"

@@ -1,0 +1,14 @@
+---
+- name: restart cms
+  supervisorctl_local: >
+    name=edxapp:cms
+    state=restarted
+    config={{ supervisor_cfg }}
+    supervisorctl_path={{ supervisor_ctl }}
+
+- name: restart lms
+  supervisorctl_local: >
+    name=edxapp:lms
+    state=restarted
+    config={{ supervisor_cfg }}
+    supervisorctl_path={{ supervisor_ctl }}
