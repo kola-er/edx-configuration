@@ -1,12 +1,8 @@
 - name: Deploy edxapp
-  hosts: "{{ machine }}"
-  pre_tasks:
-    - fail: msg="This playbook only runnable on 'app' machines"
-      when: "'app' not in machine"
+  hosts: appservers
   sudo: True
   gather_facts: True
   vars:
-    secure_dir: '../../../configuration-secure'
     # The default behaviour is not to migrate db
     # migrate_db: yes
     EDXAPP_OEE_URL: 'http://{{ BDU_WORKERS }}:18060/'
@@ -18,8 +14,7 @@
       - "{{ EDXAPP_CMS_NGINX_PORT }}"
       - "{{ EDXAPP_CMS_SSL_NGINX_PORT }}"
   vars_files:
-    - "{{ secure_dir }}/vars/deployment.yml"
-    - "{{ secure_dir }}/vars/keys.yml"
+    - "../../../configuration-secure/vars/deployment.yml"
   roles:
     - bdu_common
     - role: nginx
