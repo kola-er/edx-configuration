@@ -2,7 +2,7 @@
   hosts: dbservers
   sudo: True
   vars_files:
-    - "../../../configuration-secure/vars/keys.yml"
+    - "../../../configuration-secure/vars/deployment.yml"
   gather_facts: True
   roles:
     - bdu_common
