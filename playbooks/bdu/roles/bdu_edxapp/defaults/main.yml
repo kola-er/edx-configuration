@@ -1,0 +1,9 @@
+BDU_EDXAPP_XBLOCKS_REPO: ''
+BDU_EDXAPP_XBLOCKS_DIR: '{{ edxapp_app_dir }}/xblocks'
+BDU_EDXAPP_XBLOCKS_VERSION: 'master'
+BDU_EDXAPP_XBLOCKS_LIST: []
+BDU_EDXAPP_XBLOCKS_GIT_IDENTITY: ''
+
+bdu_edxapp_source_dir: '{{ BDU_EDXAPP_XBLOCKS_DIR }}/src'
+bdu_edxapp_xblocks_git_ssh: '/tmp/bdu_xblocks_git_ssh'
+bdu_edxapp_xblocks_git_identity: '{{ BDU_EDXAPP_XBLOCKS_DIR }}/bdu_edxapp_xblocks_git_identity'

@@ -1,0 +1,48 @@
+---
+# Optional auth for git
+- name:  xblocks | create xblock directory
+  file: >
+    name={{ BDU_EDXAPP_XBLOCKS_DIR }} state=directory
+    owner={{ edxapp_user }}
+
+- name:  xblocks | create ssh script for git (not authenticated)
+  template: >
+    src=git_ssh_noauth.sh.j2 dest={{ bdu_edxapp_xblocks_git_ssh }}
+    owner={{ edxapp_user }} mode=750
+  when: BDU_EDXAPP_XBLOCKS_GIT_IDENTITY == ""
+
+- name:  xblocks | create ssh script for git (authenticated)
+  template: >
+    src=git_ssh_auth.sh.j2 dest={{ bdu_edxapp_xblocks_git_ssh }}
+    owner={{ edxapp_user }} mode=750
+  when: BDU_EDXAPP_XBLOCKS_GIT_IDENTITY != ""
+
+- name:  xblocks | install read-only ssh key
+  copy: >
+    content="{{ BDU_EDXAPP_XBLOCKS_GIT_IDENTITY }}"
+    dest={{ bdu_edxapp_xblocks_git_identity }}
+    force=yes owner={{ edxapp_user }} mode=0600
+  when: BDU_EDXAPP_XBLOCKS_GIT_IDENTITY != ""
+
+- name:  xblocks | checkout xblocks
+  git: >
+    dest={{ bdu_edxapp_source_dir }}
+    repo={{ BDU_EDXAPP_XBLOCKS_REPO }}
+    version={{ BDU_EDXAPP_XBLOCKS_VERSION }}
+    accept_hostkey=yes
+  sudo_user: "{{ edxapp_user }}"
+  environment:
+    GIT_SSH: "{{ bdu_edxapp_xblocks_git_ssh }}"
+
+- name:  xblocks | install xblocks
+  pip: >
+    chdir="{{ bdu_edxapp_source_dir }}/{{ item }}"
+    virtualenv="{{ edxapp_venv_dir }}"
+    requirements=requirements.txt
+    extra_args="-i {{ COMMON_PYPI_MIRROR_URL }}"
+    state=present
+  sudo_user: "{{ edxapp_user }}"
+  with_items: "{{ BDU_EDXAPP_XBLOCKS_LIST }}"
+  notify:
+    - restart cms
+    - restart lms
