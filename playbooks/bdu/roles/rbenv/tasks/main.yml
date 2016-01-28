@@ -52,7 +52,7 @@
     - install:base
 
 - name: install build depends
-  apt: pkg={{ ",".join(rbenv_debian_pkgs) }} state=present install_recommends=no
+  apt: pkg={{ item }} state=present install_recommends=no
   with_items: rbenv_debian_pkgs
   tags:
     - install
