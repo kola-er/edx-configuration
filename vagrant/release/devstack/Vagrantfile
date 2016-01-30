@@ -66,6 +66,9 @@ openedx_releases = {
   "named-release/dogwood.rc2" => {
     :name => "dogwood-devstack-rc2", :file => "20151221-dogwood-devstack-rc2.box",
   },
+  "named-release/dogwood.rc3" => {
+    :name => "dogwood-devstack-rc2", :file => "20151221-dogwood-devstack-rc2.box",
+  },
   "named-release/cypress" => {
     :name => "cypress-devstack", :file => "cypress-devstack.box",
   },
@@ -75,7 +78,7 @@ openedx_releases = {
   # },
 }
 openedx_releases.default = {
-  :name => "dogwood-devstack-rc2", :file => "20151221-dogwood-devstack-rc2.box",
+  :name => "devstack-nightly-20160125", :file => "20160125-devstack-from-nightly.box",
 }
 rel = ENV['OPENEDX_RELEASE']
 

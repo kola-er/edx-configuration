@@ -23,7 +23,13 @@ export PYTHONUNBUFFERED=1
 export BOTO_CONFIG=/var/lib/jenkins/${aws_account}.boto
 
 run_ansible() {
-  ansible-playbook $@
+  if [[ "$VERBOSE" == "true" ]]; then
+    verbose_arg='-vvv'
+  else
+    verbose_arg=''
+  fi
+
+  ansible-playbook $verbose_arg $@
   ret=$?
   if [[ $ret -ne 0 ]]; then
     exit $ret
@@ -156,7 +162,7 @@ configuration_version: $configuration_version
 edx_ansible_source_repo: ${configuration_source_repo}
 edx_platform_repo: ${edx_platform_repo}
 
-EDXAPP_COMP_THEME_DIR: $edxapp_comp_theme_dir
+EDXAPP_COMPREHENSIVE_THEME_DIR: $edxapp_comprehensive_theme_dir
 
 EDXAPP_STATIC_URL_BASE: $static_url_base
 EDXAPP_LMS_NGINX_PORT: 80
@@ -175,10 +181,9 @@ CREDENTIALS_NGINX_PORT: 80
 CREDENTIALS_SSL_NGINX_PORT: 443
 CREDENTIALS_VERSION: $credentials_version
 
-COURSE_DISCOVERY_NGINX_PORT: 80
-COURSE_DISCOVERY_SSL_NGINX_PORT: 443
-COURSE_DISCOVERY_VERSION: $course_discovery_version
-
+DISCOVERY_NGINX_PORT: 80
+DISCOVERY_SSL_NGINX_PORT: 443
+DISCOVERY_VERSION: $discovery_version
 NGINX_SET_X_FORWARDED_HEADERS: True
 NGINX_REDIRECT_TO_HTTPS: True
 EDX_ANSIBLE_DUMP_VARS: true
@@ -265,9 +270,9 @@ CREDENTIALS_URL_ROOT: "https://credentials-${deploy_host}"
 CREDENTIALS_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
 COURSE_DISCOVERY_ECOMMERCE_API_URL: "https://ecommerce-${deploy_host}/api/v2"
 
-COURSE_DISCOVERY_OAUTH_URL_ROOT: "https://${deploy_host}"
-COURSE_DISCOVERY_URL_ROOT: "https://course-discovery-${deploy_host}"
-COURSE_DISCOVERY_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
+DISCOVERY_OAUTH_URL_ROOT: "https://${deploy_host}"
+DISCOVERY_URL_ROOT: "https://discovery-${deploy_host}"
+DISCOVERY_SOCIAL_AUTH_REDIRECT_IS_HTTPS: true
 
 EOF
 fi
@@ -313,7 +318,8 @@ EOF
 fi
 
 declare -A deploy
-roles="edxapp forum ecommerce programs credentials course_discovery notifier xqueue xserver certs demo testcourses"
+roles="edxapp forum ecommerce programs credentials discovery notifier xqueue xserver certs demo testcourses"
+
 for role in $roles; do
     deploy[$role]=${!role}
 done
