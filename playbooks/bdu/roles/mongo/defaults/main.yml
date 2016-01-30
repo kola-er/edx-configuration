@@ -17,20 +17,20 @@ MONGODB_APT_KEYSERVER: "keyserver.ubuntu.com"
 MONGODB_REPO: "deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen"
 
 # Vars Meant to be overridden
-# MONGO_ADMIN_USER: ''
-# MONGO_ADMIN_PASSWORD: ''
-# MONGO_USERS:
-#   - user: ''
-#     password: ''
-#     database: ''
-#     roles: ''
-#   - user: edxapp
-#     password: ''
-#     database: ''
-#     roles: ''
+MONGO_ADMIN_USER: 'admin'
+MONGO_ADMIN_PASSWORD: 'password'
+MONGO_USERS:
+  - user: cs_comments_service
+    password: password
+    database: cs_comments_service
+    roles: readWrite
+  - user: edxapp
+    password: password
+    database: edxapp
+    roles: readWrite
 
 MONGO_CLUSTERED: !!null
-MONGO_BIND_IP: 0.0.0.0
+MONGO_BIND_IP: 127.0.0.1
 
 ##
 
@@ -62,3 +62,4 @@ mongo_s3_logfile: "{{ COMMON_LOG_DIR }}/mongo/s3-mongo-backup.log"
 MONGO_S3_S3CMD_CONFIG: "{{ COMMON_DATA_DIR }}/mongo-s3-backup.s3cfg"
 MONGO_S3_BACKUP_AWS_ACCESS_KEY: !!null
 MONGO_S3_BACKUP_AWS_SECRET_KEY: !!null
+

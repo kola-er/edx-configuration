@@ -36,14 +36,14 @@
 
 - name: create api user for the analytics api
   mysql_user: >
-    name="{{ ANALYTICS_API_DATABASES.default.USER }}"
+    name=api001
     password="{{ ANALYTICS_API_DATABASES.default.PASSWORD }}"
     priv='{{ ANALYTICS_API_DATABASES.default.NAME }}.*:ALL/reports.*:SELECT'
   when: ANALYTICS_API_SERVICE_CONFIG is defined
 
 - name: create read-only reports user for the analytics-api
   mysql_user: >
-    name="{{ ANALYTICS_API_DATABASES.reports.USER }}"
+    name=reports001
     password="{{ ANALYTICS_API_DATABASES.reports.PASSWORD }}"
     priv='{{ ANALYTICS_API_DATABASES.reports.NAME }}.*:SELECT'
   when: ANALYTICS_API_SERVICE_CONFIG is defined
@@ -57,9 +57,9 @@
 
 - name: setup the edx-notes-api db user
   mysql_user: >
-    name={{ EDX_NOTES_API_DATABASES.default.USER }}
-    password={{ EDX_NOTES_API_DATABASES.default.PASS }}
-    priv='{{ EDX_NOTES_API_DATABASES.default.NAME }}.*:SELECT,INSERT,UPDATE,DELETE'
+    name={{ EDX_NOTES_API_MYSQL_DB_USER }}
+    password={{ EDX_NOTES_API_MYSQL_DB_PASS }}
+    priv='{{ EDX_NOTES_API_MYSQL_DB_NAME }}.*:SELECT,INSERT,UPDATE,DELETE'
   when: EDX_NOTES_API_MYSQL_DB_USER is defined
 
 
@@ -74,6 +74,7 @@
     name={{ COMMON_MYSQL_ADMIN_USER }}
     password={{ COMMON_MYSQL_ADMIN_PASS }}
     priv='*.*:CREATE USER'
+
 
 - name: install memcached
   apt: pkg=memcached state=present
