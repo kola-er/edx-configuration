@@ -25,14 +25,14 @@
 # with a number of changes.
 #
 
-- fail: rbenv_user required for role
-  when: rbenv_user is not defined
-
-- fail: rbenv_dir required for role
-  when: rbenv_dir is not defined
-
-- fail: rbenv_ruby_version required for role
-  when: rbenv_ruby_version is not defined
+# - fail: rbenv_user required for role
+#   when: rbenv_user is not defined
+#
+# - fail: rbenv_dir required for role
+#   when: rbenv_dir is not defined
+#
+# - fail: rbenv_ruby_version required for role
+#   when: rbenv_ruby_version is not defined
 
 - name: create rbenv user {{ rbenv_user }}
   user: >
@@ -52,7 +52,7 @@
     - install:base
 
 - name: install build depends
-  apt: pkg={{ ",".join(rbenv_debian_pkgs) }} state=present install_recommends=no
+  apt: pkg={{ item }} state=present install_recommends=no
   with_items: rbenv_debian_pkgs
   tags:
     - install
@@ -167,7 +167,7 @@
   when: jenkins_worker is not defined or not jenkins_worker
   tags:
     - install
-    - install:base  
+    - install:base
 
 - name: install rake gem
   shell: "gem install rake -v {{ rbenv_rake_version }}"
@@ -185,7 +185,7 @@
   tags:
     - install
     - install:base
-    
+
 - name: rehash
   shell: "rbenv rehash"
   sudo_user: "{{ rbenv_user }}"

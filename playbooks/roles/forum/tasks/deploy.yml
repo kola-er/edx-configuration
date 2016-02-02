@@ -26,7 +26,7 @@
   tags:
     - install
     - install:configuration
-  
+
 - name: create the supervisor wrapper
   template: >
     src={{ forum_supervisor_wrapper|basename }}.j2
@@ -82,9 +82,13 @@
   tags:
     - manage
 
-- include: test.yml tags=deploy
+- include: test.yml
+  tags:
+    - deploy
 
-- include: tag_ec2.yml tags=deploy
+- include: tag_ec2.yml
   when: COMMON_TAG_EC2_INSTANCE
-
+  tags:
+    - deploy
+    
 - set_fact: forum_installed=true

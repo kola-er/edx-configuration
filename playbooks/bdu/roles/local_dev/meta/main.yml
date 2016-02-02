@@ -1,4 +1,0 @@
----
-dependencies:
-  - role: jscover
-    jscover_version: "{{ localdev_jscover_version }}"

@@ -79,7 +79,7 @@
     cd {{ NOTIFIER_CODE_DIR }} && {{ NOTIFIER_VENV_DIR }}/bin/python manage.py syncdb
   sudo: true
   sudo_user: "{{ notifier_user }}"
-  environment: notifier_env_vars
+  environment: "{{ notifier_env_vars }}"
   notify:
     - restart notifier-scheduler
     - restart notifier-celery-workers
