@@ -1,16 +1,8 @@
-# It has to be run in the the target machine. Use pre-task.sh
-
 - name: Deploy worker
-  hosts: ~{{ machine }}
-  pre_tasks:
-    - fail: msg="This playbook only runnable on 'worker' machines"
-      when: "'worker' not in machine"
+  hosts: workerservers
   sudo: True
-  vars:
-    secure_dir: '../../../configuration-secure'
   vars_files:
-    - "{{ secure_dir }}/vars/deployment.yml"
-    - "{{ secure_dir }}/vars/keys.yml"
+    - "../../../configuration-secure/vars/deployment.yml"
   gather_facts: True
   roles:
     - bdu_common
